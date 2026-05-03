@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>XXI — A Requiem for Youth</title>
+<link rel="icon" type="image/png" href="/favicon_io/favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600&family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --black: #0a080c;
+    --deep: #100d14;
+    --gold: #c9a84c;
+    --gold-light: #e8c87a;
+    --gold-dim: #7a6130;
+    --crimson: #6b0f1a;
+    --crimson-light: #8b1a2a;
+    --bone: #f0e8d8;
+    --smoke: #c8bfb0;
+    --silver: #a8a0a8;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background-color: var(--black);
+    color: var(--bone);
+    font-family: 'EB Garamond', Georgia, serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Grain overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    background-size: 200px 200px;
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.4;
+  }
+
+  .page {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 0 24px 80px;
+    position: relative;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    text-align: center;
+    padding: 60px 0 40px;
+    position: relative;
+  }
+
+  .cross-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: fadeDown 1s ease 0.3s forwards;
+  }
+
+  .cross-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--gold-dim), var(--gold), var(--gold-dim));
+    max-width: 200px;
+  }
+  .cross-line.right {
+    background: linear-gradient(to left, transparent, var(--gold-dim), var(--gold), var(--gold-dim));
+  }
+
+  .cross-symbol {
+    font-size: 28px;
+    color: var(--gold);
+    text-shadow: 0 0 20px rgba(201,168,76,0.6);
+    animation: glow 3s ease-in-out infinite;
+  }
+
+  @keyframes glow {
+    0%, 100% { text-shadow: 0 0 20px rgba(201,168,76,0.4); }
+    50% { text-shadow: 0 0 40px rgba(201,168,76,0.8), 0 0 60px rgba(201,168,76,0.3); }
+  }
+
+  .eyebrow {
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+    margin-bottom: 20px;
+    opacity: 0;
+    animation: fadeDown 1s ease 0.5s forwards;
+  }
+
+  .main-title {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: clamp(52px, 12vw, 96px);
+    font-weight: 900;
+    color: var(--gold);
+    line-height: 0.9;
+    letter-spacing: -2px;
+    text-shadow:
+      0 0 40px rgba(201,168,76,0.3),
+      0 2px 0 rgba(0,0,0,0.8);
+    opacity: 0;
+    animation: fadeUp 1.2s ease 0.7s forwards;
+    margin-bottom: 12px;
+  }
+
+  .subtitle-latin {
+    font-family: 'EB Garamond', serif;
+    font-style: italic;
+    font-size: 18px;
+    color: var(--smoke);
+    letter-spacing: 3px;
+    opacity: 0;
+    animation: fadeUp 1s ease 1s forwards;
+    margin-bottom: 32px;
+  }
+
+  /* ── ORNAMENT ── */
+  .ornament {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    margin: 24px 0;
+    opacity: 0;
+    animation: fadeUp 1s ease 1.1s forwards;
+  }
+  .ornament-line {
+    width: 80px;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--gold));
+  }
+  .ornament-line.r { background: linear-gradient(to left, transparent, var(--gold)); }
+  .ornament-diamond {
+    width: 6px; height: 6px;
+    background: var(--gold);
+    transform: rotate(45deg);
+    box-shadow: 0 0 8px rgba(201,168,76,0.6);
+  }
+
+  /* ── PHOTO FRAME ── */
+  .photo-section {
+    position: relative;
+    margin: 48px 0;
+    opacity: 0;
+    animation: fadeUp 1.2s ease 1.3s forwards;
+  }
+
+  .photo-border-outer {
+    border: 1px solid var(--gold-dim);
+    padding: 12px;
+    background: linear-gradient(135deg, rgba(201,168,76,0.05) 0%, transparent 50%, rgba(201,168,76,0.05) 100%);
+  }
+
+  .photo-border-inner {
+    border: 1px solid rgba(201,168,76,0.3);
+    padding: 8px;
+  }
+
+  .photo-wrapper {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .photo-wrapper img {
+    width: 100%;
+    height: 460px;
+    object-fit: cover;
+    object-position: center 20%;
+    display: block;
+    filter: sepia(0.2) contrast(1.05) brightness(0.9);
+    transition: filter 0.6s ease;
+  }
+  .photo-wrapper:hover img {
+    filter: sepia(0) contrast(1.05) brightness(1);
+  }
+
+  /* Corner flourishes */
+  .corner {
+    position: absolute;
+    width: 32px; height: 32px;
+    pointer-events: none;
+  }
+  .corner::before, .corner::after {
+    content: '';
+    position: absolute;
+    background: var(--gold);
+  }
+  .corner::before { width: 100%; height: 1px; top: 0; left: 0; }
+  .corner::after  { width: 1px; height: 100%; top: 0; left: 0; }
+
+  .corner-tl { top: -1px; left: -1px; }
+  .corner-tr { top: -1px; right: -1px; transform: scaleX(-1); }
+  .corner-bl { bottom: -1px; left: -1px; transform: scaleY(-1); }
+  .corner-br { bottom: -1px; right: -1px; transform: scale(-1); }
+
+  /* Photo caption */
+  .photo-caption {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    background: linear-gradient(to top, rgba(10,8,12,0.95) 0%, transparent 100%);
+    padding: 60px 24px 20px;
+    text-align: center;
+  }
+
+  .caption-name {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--gold-light);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+  }
+
+  /* ── DIVIDERS ── */
+  .section-divider {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin: 40px 0;
+    opacity: 0;
+    animation: fadeUp 1s ease 1.5s forwards;
+  }
+  .div-line { flex: 1; height: 1px; background: linear-gradient(to right, transparent, var(--gold-dim) 40%, var(--gold) 50%, var(--gold-dim) 60%, transparent); }
+  .div-ornament {
+    padding: 0 16px;
+    font-size: 14px;
+    color: var(--gold);
+  }
+
+  /* ── EVENT DETAILS ── */
+  .event-block {
+    text-align: center;
+    margin: 0 auto 40px;
+    max-width: 600px;
+    opacity: 0;
+    animation: fadeUp 1s ease 1.6s forwards;
+  }
+
+  .event-label {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+    margin-bottom: 10px;
+  }
+
+  .event-value {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--gold-light);
+    text-shadow: 0 0 30px rgba(201,168,76,0.3);
+    line-height: 1.2;
+  }
+
+  .event-value.large {
+    font-size: 42px;
+  }
+
+  .event-sub {
+    font-family: 'EB Garamond', serif;
+    font-style: italic;
+    font-size: 15px;
+    color: var(--smoke);
+    margin-top: 6px;
+    letter-spacing: 1px;
+  }
+
+  /* ── THREE COLUMNS ── */
+  .details-grid {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 0;
+    margin: 0 0 40px;
+    text-align: center;
+    opacity: 0;
+    animation: fadeUp 1s ease 1.7s forwards;
+  }
+
+  .detail-divider {
+    width: 1px;
+    background: linear-gradient(to bottom, transparent, var(--gold-dim), transparent);
+    margin: 0 24px;
+  }
+
+  .detail-item {}
+  .detail-item .event-label { margin-bottom: 8px; }
+  .detail-item .event-value { font-size: 20px; }
+
+  /* ── BODY TEXT ── */
+  .body-text {
+    font-family: 'EB Garamond', serif;
+    font-size: 18px;
+    line-height: 1.85;
+    color: var(--smoke);
+    text-align: center;
+    max-width: 560px;
+    margin: 0 auto 32px;
+    opacity: 0;
+    animation: fadeUp 1s ease 1.8s forwards;
+  }
+
+  .body-text em {
+    color: var(--bone);
+    font-style: italic;
+  }
+
+  /* ── VERSE / QUOTE ── */
+  .verse-block {
+    border-left: 2px solid var(--gold-dim);
+    border-right: 2px solid var(--gold-dim);
+    padding: 28px 40px;
+    margin: 40px 0;
+    text-align: center;
+    position: relative;
+    background: linear-gradient(to right, rgba(201,168,76,0.04), transparent, rgba(201,168,76,0.04));
+    opacity: 0;
+    animation: fadeUp 1s ease 1.9s forwards;
+  }
+
+  .verse-text {
+    font-family: 'EB Garamond', serif;
+    font-style: italic;
+    font-size: 20px;
+    line-height: 1.7;
+    color: var(--bone);
+  }
+
+  .verse-source {
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    letter-spacing: 4px;
+    color: var(--gold-dim);
+    margin-top: 16px;
+    text-transform: uppercase;
+  }
+
+  /* ── RSVP BUTTON ── */
+  .rsvp-section {
+    text-align: center;
+    margin: 48px 0;
+    opacity: 0;
+    animation: fadeUp 1s ease 2s forwards;
+  }
+
+  .rsvp-instruction {
+    font-family: 'EB Garamond', serif;
+    font-style: italic;
+    font-size: 16px;
+    color: var(--smoke);
+    margin-bottom: 20px;
+  }
+
+  .rsvp-btn {
+    display: inline-block;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    font-family: 'Cinzel', serif;
+    font-size: 12px;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    padding: 16px 40px;
+    text-decoration: none;
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    background: transparent;
+  }
+
+  .rsvp-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--gold);
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.4s ease;
+    z-index: -1;
+  }
+
+  .rsvp-btn:hover {
+    color: var(--black);
+    text-shadow: none;
+  }
+  .rsvp-btn:hover::before { transform: scaleX(1); transform-origin: left; }
+
+  /* ── FOOTER ── */
+  .footer {
+    text-align: center;
+    padding: 40px 0 20px;
+    border-top: 1px solid rgba(201,168,76,0.15);
+    opacity: 0;
+    animation: fadeUp 1s ease 2.1s forwards;
+  }
+
+  .footer-cross {
+    font-size: 20px;
+    color: var(--gold-dim);
+    display: block;
+    margin-bottom: 12px;
+  }
+
+  .footer-text {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 4px;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── CANDLE PARTICLES (optional flair) ── */
+  .candles {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin: 32px 0;
+    opacity: 0;
+    animation: fadeUp 1s ease 2.2s forwards;
+  }
+  .candle {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+  .flame {
+    width: 10px;
+    height: 16px;
+    background: radial-gradient(ellipse at 50% 80%, #fffbe0 0%, #ffd54f 40%, #ff8f00 80%, transparent 100%);
+    border-radius: 50% 50% 30% 30%;
+    box-shadow: 0 0 8px rgba(255,180,0,0.8), 0 0 16px rgba(255,100,0,0.4);
+    animation: flicker 1.5s ease-in-out infinite;
+  }
+  .wick {
+    width: 2px; height: 6px;
+    background: #333;
+  }
+  .candle-body {
+    width: 14px;
+    height: 60px;
+    background: linear-gradient(to right, #e0d0c0, #f0e8d8, #c8b8a8);
+    border-radius: 2px;
+  }
+  @keyframes flicker {
+    0%, 100% { transform: scaleX(1) scaleY(1) rotate(-2deg); opacity: 1; }
+    25%       { transform: scaleX(0.8) scaleY(1.1) rotate(2deg); }
+    50%       { transform: scaleX(1.1) scaleY(0.9) rotate(-1deg); }
+    75%       { transform: scaleX(0.9) scaleY(1.05) rotate(1deg); opacity: 0.9; }
+  }
+  .candle:nth-child(2) .flame { animation-delay: 0.3s; }
+  .candle:nth-child(3) .flame { animation-delay: 0.6s; }
+
+  /* scrolled-in counter for the XXI */
+  .numeral-huge {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: clamp(100px, 30vw, 200px);
+    font-weight: 900;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(201,168,76,0.2);
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -55%);
+    pointer-events: none;
+    letter-spacing: -8px;
+    user-select: none;
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <header class="header">
+
+    <div class="cross-container">
+      <div class="cross-line"></div>
+      <span class="cross-symbol">✝</span>
+      <div class="cross-line right"></div>
+    </div>
+
+    <p class="eyebrow">In nomine Patris et Filii et Spiritus Sancti</p>
+
+    <h1 class="main-title">XXI</h1>
+
+    <p class="subtitle-latin">Viginti Unum · Anno Domini MMXXVI</p>
+
+    <div class="ornament">
+      <div class="ornament-line"></div>
+      <div class="ornament-diamond"></div>
+      <div class="ornament-line r"></div>
+    </div>
+
+  </header>
+
+  <!-- PHOTO -->
+  <section class="photo-section">
+    <div class="photo-border-outer">
+      <div class="photo-border-inner">
+        <div class="photo-wrapper" style="position:relative;">
+          <div class="corner corner-tl"></div>
+          <div class="corner corner-tr"></div>
+          <div class="corner corner-bl"></div>
+          <div class="corner corner-br"></div>
+          <img src="/IMG_1217.HEIC" />
+          <div class="photo-caption">
+            <p class="caption-name">The Guest of Honor</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VERSE -->
+  <div class="verse-block">
+    <p class="verse-text">
+      "Youth is the gift of nature,<br>
+      but age is a work of art."
+    </p>
+    <p class="verse-source">— Attributed to Stanisław Jerzy Lec</p>
+  </div>
+
+  <!-- SECTION DIVIDER -->
+  <div class="section-divider">
+    <div class="div-line"></div>
+    <div class="div-ornament">❧</div>
+    <div class="div-line"></div>
+  </div>
+
+  <!-- MAIN INVITE TEXT -->
+  <div class="event-block">
+    <p class="event-label">You are summoned</p>
+    <h2 class="event-value large">Birthday Mass</h2>
+    <p class="event-sub">Ban celebra bida, paso morto ta sigui</p>
+  </div>
+
+  <!-- DATE & PLACE GRID -->
+  <div class="details-grid">
+
+    <div class="detail-item">
+      <p class="event-label">The Sacred Date</p>
+      <p class="event-value">9 May<br>2026</p>
+      <p class="event-sub">Saturday</p>
+    </div>
+
+    <div class="detail-divider"></div>
+
+    <div class="detail-item">
+      <p class="event-label">The Ceremony Begins</p>
+      <p class="event-value">Ora Alina </p>
+      <p class="event-sub">Make Up Su Mind</p>
+    </div>
+
+  </div>
+
+  <!-- ORNAMENT -->
+  <div class="ornament" style="animation-delay:0s;opacity:1;">
+    <div class="ornament-line"></div>
+    <div class="ornament-diamond"></div>
+    <span style="font-size:12px;color:var(--gold);padding:0 8px;">✦</span>
+    <div class="ornament-diamond"></div>
+    <div class="ornament-line r"></div>
+  </div>
+
+  <!-- BODY TEXT -->
+  <p class="body-text">
+    Bisti preto.<br>
+    Bebe biña.<br>
+    <em>bye bye youth<br>
+    Legal in the states.</em>
+  </p>
+
+  <!-- CANDLES -->
+  <div class="candles">
+    <div class="candle">
+      <div class="flame"></div>
+      <div class="wick"></div>
+      <div class="candle-body"></div>
+    </div>
+    <div class="candle">
+      <div class="flame"></div>
+      <div class="wick"></div>
+      <div class="candle-body"></div>
+    </div>
+    <div class="candle">
+      <div class="flame"></div>
+      <div class="wick"></div>
+      <div class="candle-body"></div>
+    </div>
+  </div>
+
+  <!-- SECTION DIVIDER -->
+  <div class="section-divider" style="margin-top:0">
+    <div class="div-line"></div>
+    <div class="div-ornament">✝</div>
+    <div class="div-line"></div>
+  </div>
+
+  <!-- RSVP -->
+  <div class="rsvp-section">
+    <p class="rsvp-instruction">He who does not show up is Gay</p>
+    <button class="rsvp-btn">— RSVP —</button>
+    <p class="event-sub" style="margin-top:20px;">Dress code: Preto, pero no Emo</p>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <span class="footer-cross">✝</span>
+    <p class="footer-text">Anno Domini MMXXVI · Turning XXI</p>
+  </footer>
+
+</div>
+</body>
+</html>
